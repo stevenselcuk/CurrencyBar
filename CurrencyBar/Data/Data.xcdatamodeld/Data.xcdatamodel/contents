@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Asset" representedClassName="Asset" syncable="YES" codeGenerationType="class">
+        <attribute name="addMenubar" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="oldTargetAmountRaw" optional="YES" attributeType="Decimal" defaultValueString="YES"/>
+        <attribute name="originalCurrencyRaw" optional="YES" attributeType="String" defaultValueString="Up"/>
+        <attribute name="originAmountRaw" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="targetAmountRaw" optional="YES" attributeType="Decimal" defaultValueString="200"/>
+        <attribute name="targetCurrencyRaw" optional="YES" attributeType="String" defaultValueString="Name"/>
+        <attribute name="trend" optional="YES" attributeType="String" defaultValueString="circle.fill"/>
+    </entity>
+    <elements>
+        <element name="Asset" positionX="-63" positionY="-18" width="128" height="164"/>
+    </elements>
+</model>
