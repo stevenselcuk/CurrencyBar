@@ -9,14 +9,14 @@ import SwiftUI
 
 struct MenubarView: View {
     @ObservedObject var manager = Manager.share
-   // let timer = Timer.publish(every: TimeInterval(Manager.share.checkInterval), on: .main, in: .common).autoconnect()
-    let timer = Timer.publish(every: 10, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: TimeInterval(Manager.share.checkInterval), on: .main, in: .common).autoconnect()
     var data = PersistenceProvider.default
 
     @FetchRequest(sortDescriptors: [SortDescriptor(\.lastUpdate)], predicate: NSPredicate(format: "addMenubar == %@", NSNumber(value: true)))
     var assets: FetchedResults<Asset>
 
     @State var isConnected: Bool = true
+    @State var updateID: UUID = UUID()
     var body: some View {
         if assets.count < 1 {
             Text("🍸 CurrencyBar")
@@ -45,7 +45,7 @@ struct MenubarView: View {
                             .lineLimit(1)
                             .fixedSize(horizontal: false, vertical: false)*/
                     }.padding(.horizontal, 5)
-
+                   
                     /*  if index < assets.count - 1 {
                        Circle()
                             .fill(Color.gray.opacity(0.3))
@@ -57,7 +57,7 @@ struct MenubarView: View {
             }
             .fixedSize(horizontal: false, vertical: true)
             .frame(maxWidth: .infinity)
-
+            .id(updateID)
            // .frame(width: CGFloat(assets.count) * 100, height: 20, alignment: .center)
                 .onReceive(timer) { _ in
                     isConnected = Reachability.isConnectedToNetwork()
@@ -75,10 +75,12 @@ struct MenubarView: View {
                             asset.targetAmountRaw = Decimal(val).asDecimalNumber
                             asset.targetAmount = Money(amount: val, in: asset.targetCurrency)
                             try? data.context.save()
+                            updateID = UUID()
                         })
-                        
-                        
+                        try? data.context.save()
                     }
+                    try? data.context.save()
+                    updateID = UUID()
                 }
         } else {
             Text("🔌 No connection")

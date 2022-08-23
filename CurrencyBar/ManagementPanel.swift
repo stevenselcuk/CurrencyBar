@@ -126,8 +126,9 @@ struct ManagementPanel: View {
 
             AssetList()
             HStack {
-                Image(systemName: "gear")
+                Text("Settings")
                     .padding()
+                     .fontBold(size: 12)
                     .onTapGesture {
                         showingSettings = true
                     }
@@ -189,8 +190,8 @@ struct ManagementPanel: View {
                     .padding()
 
                 Spacer()
-                Image(systemName: "power")
-                    .fontBold(size: 12)
+                Text("Quit")
+                     .fontBold(size: 12)
                     .onTapGesture {
                         Manager.quitApp()
                     }
