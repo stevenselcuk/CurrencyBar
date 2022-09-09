@@ -40,12 +40,9 @@ struct ManagementPanel: View {
         amount: 0,
         locale: .init(identifier: "en_US")
     )
-    
 
-    
     @State var launchAtLogin: Bool = storage.bool(forKey: "launchAtLogin")
-   
-    
+
     var body: some View {
         VStack {
             HStack(alignment: .center, spacing: 0) {
@@ -83,7 +80,7 @@ struct ManagementPanel: View {
                             }
 
                             Divider()
-                            
+
                             TextField(currencyManager.string, text: $currencyManager.string)
                                 .multilineTextAlignment(.leading)
                                 .onChange(of: currencyManager.string, perform: currencyManager.valueChanged)
@@ -102,12 +99,11 @@ struct ManagementPanel: View {
 
                                     asset.originalCurrency = Currency(code: selectedBaseCountry.currency)
                                     asset.targetCurrency = Currency(code: selectedTargetCountry.currency)
-                                
-                                   
+
                                     asset.originAmountRaw = (currencyManager.amount) as NSDecimalNumber
                                     asset.addMenubar = showInMenubar
                                     try? data.context.save()
-                                    CurrencyConverter.default.convert(baseCurrency: selectedBaseCountry.currency, toConvert: selectedTargetCountry.currency, amount:  currencyManager.amount.doubleValue, completion: { val in
+                                    CurrencyConverter.default.convert(baseCurrency: selectedBaseCountry.currency, toConvert: selectedTargetCountry.currency, amount: currencyManager.amount.doubleValue, completion: { val in
                                         asset.targetAmountRaw = Decimal(val).asDecimalNumber
                                         asset.oldTargetAmount = Money(amount: val, in: Currency(code: selectedTargetCountry.currency))
                                         asset.targetAmount = Money(amount: val, in: Currency(code: selectedTargetCountry.currency))
@@ -126,76 +122,82 @@ struct ManagementPanel: View {
 
             AssetList()
             HStack {
-                Text("Settings")
-                    .padding()
-                     .fontBold(size: 12)
-                    .onTapGesture {
-                        showingSettings = true
-                    }
-                    .popover(isPresented: $showingSettings) {
-                        VStack(alignment: .leading, spacing: 20) {
-                            HStack(alignment: .center, spacing: 0) {
-                                Text("Check Every")
-                                    .fontRegular(size: 12)
-                                Spacer()
-                                Stepper {
-                                    Text("\(String(format: "%.0f", manager.checkInterval / 60 / 60)) hr. ")
-                                } onIncrement: {
-                                    manager.checkInterval += 60 * 60
+                VStack {
+                    Image(systemName: "gear")
+                    Text("Settings")
+                }
+                .padding()
+                .fontBold(size: 12)
+                .onTapGesture {
+                    showingSettings = true
+                }
+                .popover(isPresented: $showingSettings) {
+                    VStack(alignment: .leading, spacing: 20) {
+                        HStack(alignment: .center, spacing: 0) {
+                            Text("Check Every")
+                                .fontRegular(size: 12)
+                            Spacer()
+                            Stepper {
+                                Text("\(String(format: "%.0f", manager.checkInterval / 60 / 60)) hr. ")
+                            } onIncrement: {
+                                manager.checkInterval += 60 * 60
+                                storage.set(manager.checkInterval, forKey: "checkInterval")
+                            } onDecrement: {
+                                if manager.checkInterval > 60 * 60 * 1 {
+                                    manager.checkInterval -= 60 * 60
                                     storage.set(manager.checkInterval, forKey: "checkInterval")
-                                } onDecrement: {
-                                    if manager.checkInterval > 60 * 60 * 1 {
-                                        manager.checkInterval -= 60 * 60
-                                        storage.set(manager.checkInterval, forKey: "checkInterval")
-                                    }
+                                }
+                            }
+                            .fontRegular(size: 12)
+                        }
+
+                        HStack(alignment: .center, spacing: 0) {
+                            Text("Launch at login")
+                                .fontRegular(size: 12)
+                            Spacer()
+                            Toggle("", isOn: $launchAtLogin)
+                                .onChange(of: launchAtLogin) { newValue in
+                                    SMLoginItemSetEnabled(Constants.helperBundleID as CFString,
+                                                          launchAtLogin)
+                                    print(newValue.description)
+                                    print(launchAtLogin)
+                                    storage.set(newValue.description, forKey: "launchAtLogin")
                                 }
                                 .fontRegular(size: 12)
-                            }
+                        }
 
-                            HStack(alignment: .center, spacing: 0) {
-                                Text("Launch at login")
+                        HStack {
+                            Text("Bug or feature?")
+                                .fontRegular(size: 12)
+                            Spacer()
+                            Button(action: {
+                                let uri = "https://twitter.com/hevalandsteven"
+                                if let url = URL(string: uri) {
+                                    NSWorkspace.shared.open(url)
+                                }
+                            }, label: {
+                                Text("Tell me")
                                     .fontRegular(size: 12)
-                                Spacer()
-                                Toggle("", isOn: $launchAtLogin)
-                                    .onChange(of: launchAtLogin) { newValue in
-                                        SMLoginItemSetEnabled(Constants.helperBundleID as CFString,
-                                                              launchAtLogin)
-                                        print(newValue.description)
-                                        print(launchAtLogin)
-                                        storage.set(newValue.description, forKey: "launchAtLogin")
-                                    }
-                                    .fontRegular(size: 12)
-                            }
-
-                            HStack {
-                                Text("Bug or feature?")
-                                    .fontRegular(size: 12)
-                                Spacer()
-                                Button(action: {
-                                    let uri = "https://twitter.com/hevalandsteven"
-                                    if let url = URL(string: uri) {
-                                        NSWorkspace.shared.open(url)
-                                    }
-                                }, label: {
-                                    Text("Tell me")
-                                        .fontRegular(size: 12)
-                                })
-                            }
-                        }.padding(.all, 10)
-                            .frame(minWidth: 160, maxWidth: .infinity, minHeight: 90, maxHeight: .infinity, alignment: .topLeading)
-                    }
+                            })
+                        }
+                    }.padding(.all, 10)
+                        .frame(minWidth: 160, maxWidth: .infinity, minHeight: 90, maxHeight: .infinity, alignment: .topLeading)
+                }
                 Spacer()
                 Text("")
                     .fontMonoMedium(size: 12)
                     .padding()
 
                 Spacer()
-                Text("Quit")
-                     .fontBold(size: 12)
-                    .onTapGesture {
-                        Manager.quitApp()
-                    }
-                    .padding()
+                VStack {
+                    Image(systemName: "power")
+                    Text("Quit")
+                }
+                .fontBold(size: 12)
+                .onTapGesture {
+                    Manager.quitApp()
+                }
+                .padding()
             }.border(width: 1, edges: [.top], color: Color.gray.opacity(0.1))
         }
         .frame(width: 240, height: 380, alignment: .center)
