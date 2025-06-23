@@ -1,4 +1,6 @@
 
+ 🎉 Now switch to public repo! 🎉
+ 
 <div align="center">
 	<img src="https://i.imgur.com/4vpMiuQ.png" width="128" height="128" />
 	<h1><strong>🍸CurrencyBar</h1>
